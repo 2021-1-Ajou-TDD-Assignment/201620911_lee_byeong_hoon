@@ -29,9 +29,11 @@ public class BowlingGameTest {
 	}
 
 	@Ignore("until we get desing right")
+	@Ignore("until we walk frame by frame")
 	@Test
 	public void testOneSpare() {
 		g.roll(5);
+		
 		g.roll(5);
 		g.roll(3);
 		rollMany(17,0);
