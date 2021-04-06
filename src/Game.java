@@ -1,40 +1,68 @@
-public class Game {
-	private int[] rolls = new int[21];
-	private int currentRoll = 0;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+public class BowlingGameTest {
+	protected Game g;
 	
-	public void roll(int pins) {
-		rolls[currentRoll ++] = pins;
+	@Before
+	public void setUp() {
+		g = new Game();
 	}
-	public int score() {
-		int score=0;
-		int frameIndex = 0;
-		for(int frame=0; frame < 10; frame++) {
-			if(isSpare(frameIndex))//spare
-			if(isStrike(frameIndex)) {
-				score+=10+strikeBonus(frameIndex);
-				frameIndex++;
-			}
-			else if(isSpare(frameIndex))//spare
-			{
-				score += 10 + rolls[frameIndex+2];
-				frameIndex+=2;
-			}else {
-				score+=rolls[frameIndex] + rolls[frameIndex+1];
-				frameIndex+=2;
-			}
+	
+	private void rollMany(int n, int pins) {
+		for(int i=0;i<n;i++) {
+			g.roll(pins);
 		}
-		return score;
+	}
+	
+	@Test
+	public void testGutterGame() {
+		rollMany(20, 0);
+		assertEquals(0,g.score());
+	}
+	
+	@Test
+	public void testAllOnes() {
+		rollMany(20, 1);
+		assertEquals(20,g.score());
+	}
+	
+	@Test
+	public void testOneSpare() {
+		rollSpare();
+		g.roll(3);
+		rollMany(17,0);
+		assertEquals(16,g.score());
+	}
+	@Test
+	public void testOneStrike() {
+		rollStrike();
+		g.roll(3);
+		g.roll(4);
+		rollMany(16,0);
+		assertEquals(24,g.score());
 	}
 
-	private boolean isStrike(int frameIndex) {
-		return rolls[frameIndex] == 10;
+	@Test
+	public void testPerfectGame() {
+		rollMany(12,10);
+		assertEquals(300,g.score());
 	}
 
-	private int strikeBonus(int frameIndex) {
-		return rolls[frameIndex+1] + rolls[frameIndex+2];
+	@Test
+	public void testTwoStrikes() {
+		rollStrike();
+		rollStrike();
+		rollMany(0,16);
+		assertEquals(30,g.score());
 	}
 
-	protected boolean isSpare(int frameIndex) {
-		return rolls[frameIndex] + rolls[frameIndex+1] == 10;
+	private void rollStrike() {
+		g.roll(10);
+	}
+	private void rollSpare() {
+		g.roll(5);
+		g.roll(5);
 	}
 }
